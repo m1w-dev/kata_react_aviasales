@@ -1,5 +1,21 @@
-import './App.scss';
+import Button from '../Button';
+import Filter from '../Filter';
+import Logo from '../Logo';
+import Tabs from '../Tabs';
+import Ticket from '../Ticket';
 
-const App = () => {};
+import './App.module.scss';
+
+const App = () => {
+  return (
+    <div className="Aviasales">
+      <Logo />
+      <Tabs />
+      <Filter />
+      <Ticket />
+      <Button />
+    </div>
+  );
+};
 
 export default App;
