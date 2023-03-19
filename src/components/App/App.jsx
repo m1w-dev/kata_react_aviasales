@@ -4,16 +4,23 @@ import Logo from '../Logo';
 import Tabs from '../Tabs';
 import Ticket from '../Ticket';
 
-import './App.module.scss';
+import css from './App.module.scss';
 
 const App = () => {
   return (
-    <div className="Aviasales">
+    <div className={css.Aviasales}>
       <Logo />
-      <Tabs />
-      <Filter />
-      <Ticket />
-      <Button />
+      <div className={css.layout}>
+        <div className={css.sidebar}>
+          <Filter />
+        </div>
+        <div className={css.main}>
+          <Tabs />
+          <Ticket />
+
+          <Button />
+        </div>
+      </div>
     </div>
   );
 };
