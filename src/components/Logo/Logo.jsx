@@ -1,11 +1,13 @@
 import cn from 'classnames';
+import propTypes from 'prop-types';
+import { connect } from 'react-redux';
 
 import css from './Logo.module.scss';
 import globe from './globe.svg';
 import plane from './plane.svg';
 
-const Logo = () => {
-  const planeCSS = cn(css.planeImg, css.img, { [`${css.onLoad}`]: false });
+const Logo = ({ isLoading }) => {
+  const planeCSS = cn(css.planeImg, css.img, { [`${css.onLoad}`]: isLoading });
 
   return (
     <div className={css.logo}>
@@ -17,4 +19,17 @@ const Logo = () => {
   );
 };
 
-export default Logo;
+Logo.defaultProps = {
+  isLoading: false,
+};
+Logo.propTypes = {
+  isLoading: propTypes.bool,
+};
+
+const mapStateToProps = (state) => {
+  return {
+    isLoading: state.isLoading,
+  };
+};
+
+export default connect(mapStateToProps)(Logo);
