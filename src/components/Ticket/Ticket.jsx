@@ -1,4 +1,5 @@
 import cn from 'classnames';
+//import propTypes from 'prop-types';
 
 import css from './Ticket.module.scss';
 

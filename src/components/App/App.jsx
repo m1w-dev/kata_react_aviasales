@@ -17,7 +17,6 @@ const App = () => {
         <div className={css.main}>
           <Tabs />
           <Ticket />
-
           <Button />
         </div>
       </div>

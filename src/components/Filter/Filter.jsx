@@ -1,41 +1,99 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import cn from 'classnames';
+import propTypes from 'prop-types';
+import { connect } from 'react-redux';
+
+import { setFilter } from '../../store/aviasales';
 
 import css from './Filter.module.scss';
 
-const Filter = () => {
-  const fItemsTemp = [
-    { label: 'Все', value: 'all', checked: true },
-    { label: 'Без пересадок', value: '0', checked: true },
-    { label: '1 пересадка', value: '1', checked: false },
-    { label: '2 пересадки', value: '2', checked: true },
-    { label: '3 пересадки', value: '3', checked: true },
-  ];
-
-  const fItems = fItemsTemp.map(({ label, value, checked }) => {
-    return <FilterItem key={value} label={label} value={value} checked={checked} />;
+const Filter = ({ filter, setFilter }) => {
+  const [isAll, setIsAll] = useState(false);
+  const [filterItems, setFItems] = useState({
+    t0: { label: 'Без пересадок', checked: false },
+    t1: { label: '1 пересадка', checked: false },
+    t2: { label: '2 пересадки', checked: false },
+    t3: { label: '3 пересадки', checked: false },
   });
+
+  const toggleAllFilter = (isChecked) => {
+    setIsAll(isChecked);
+    setFilter(isChecked ? Object.keys(filterItems) : []);
+  };
+
+  const toggleFilter = (isChecked, val) => {
+    const newConfig = [];
+    for (const k in filterItems) {
+      if (k == val) {
+        if (isChecked) newConfig.push(k);
+      } else {
+        if (filterItems[k].checked) newConfig.push(k);
+      }
+    }
+    setFilter(newConfig);
+  };
+
+  useEffect(() => {
+    buildItemsFromConfig(filter);
+  }, [filter]);
+
+  const buildItemsFromConfig = (cfg) => {
+    if (cfg.length === Object.keys(filterItems).length) {
+      setIsAll(true);
+    } else {
+      setIsAll(false);
+    }
+
+    setFItems((items) => {
+      const newItems = {};
+      for (const k in items) {
+        newItems[k] = { ...items[k], checked: cfg.includes(k) };
+      }
+      return newItems;
+    });
+  };
+
+  const fItems = [];
+  for (const k in filterItems) {
+    fItems.push(<FilterItem key={k} value={k} onClick={toggleFilter} {...filterItems[k]} />);
+  }
 
   return (
     <div className={cn(css.Filter, 'boxShadow', 'borderRadius')}>
       <span className={css.label}>Количество пересадок</span>
+      <FilterItem value="all" label={'Все'} checked={isAll} onClick={toggleAllFilter} />
       {fItems}
     </div>
   );
 };
 
-const FilterItem = ({ value, label, checked }) => {
-  const [ch, setChecked] = useState(checked);
+Filter.defaultProps = {
+  setFilter: () => {},
+  filter: [],
+};
+Filter.propTypes = {
+  setFilter: propTypes.func,
+  filter: propTypes.array,
+};
 
+const mapStateToProps = (state) => {
+  return {
+    filter: state.filter,
+  };
+};
+
+export default connect(mapStateToProps, { setFilter })(Filter);
+
+const FilterItem = ({ value, label, checked, onClick }) => {
   return (
     <label className={css.item}>
       <input
         type="checkbox"
         value={value}
         className={css.checkbox}
-        checked={ch}
+        checked={checked}
         onChange={() => {
-          setChecked((s) => !s);
+          onClick(!checked, value);
         }}
       />
       <span className={css.visualCheckBox}></span>
@@ -44,4 +102,16 @@ const FilterItem = ({ value, label, checked }) => {
   );
 };
 
-export default Filter;
+FilterItem.defaultProps = {
+  value: undefined,
+  label: undefined,
+  checked: false,
+  onClick: () => {},
+};
+
+FilterItem.propTypes = {
+  value: propTypes.string,
+  label: propTypes.string,
+  checked: propTypes.bool,
+  onClick: propTypes.func,
+};
