@@ -1,43 +1,50 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 
-const aviasales = {};
+import getTickets from '../services/aviasales';
 
-const sort = createSlice({
-  name: 'sort',
-  initialState: 'fast',
+const initialState = {
+  isLoading: true,
+  errors: 0,
+  sort: 'fast',
+  filter: ['t0', 't1', 't2', 't3'],
+  tickets: [],
+  toShow: 5,
+};
+
+const aviasales = createSlice({
+  name: 'aviasales',
+  initialState,
   reducers: {
     setSort(state, action) {
-      return action.payload;
+      return { ...state, sort: action.payload };
     },
-  },
-});
-
-aviasales.sort = sort.reducer;
-export const { setSort } = sort.actions;
-
-const filter = createSlice({
-  name: 'filter',
-  initialState: ['t0', 't1', 't2', 't3'],
-  reducers: {
     setFilter(store, action) {
-      return action.payload;
+      return { ...store, filter: action.payload };
+    },
+    showMore(store) {
+      return { ...store, toShow: store.toShow + 5 };
+    },
+    addTickets(store, action) {
+      const { stop: isStop, error, tickets } = action.payload;
+      return {
+        ...store,
+        isLoading: !isStop,
+        errors: error ? store.errors + 1 : store.errors,
+        tickets: [...store.tickets, ...tickets],
+      };
     },
   },
 });
-aviasales.filter = filter.reducer;
-export const { setFilter } = filter.actions;
 
-const isLoading = createSlice({
-  name: 'isLoading',
-  initialState: true,
-  reducers: {
-    setLoading(store, action) {
-      return action.payload;
-    },
-  },
+export const { setSort, setFilter, showMore, addTickets } = aviasales.actions;
+
+export const fetchTickets = createAsyncThunk('aviasales/fetchTickets', async (pl, api) => {
+  const loop = async () => {
+    let part = await getTickets();
+    api.dispatch(addTickets(part));
+    if (!part.stop) loop();
+  };
+  await loop();
 });
 
-aviasales.isLoading = isLoading.reducer;
-export const { setLoading } = isLoading.actions;
-
-export default aviasales;
+export default aviasales.reducer;
