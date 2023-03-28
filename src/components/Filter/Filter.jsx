@@ -10,10 +10,10 @@ import css from './Filter.module.scss';
 const Filter = ({ filter, setFilter }) => {
   const [isAll, setIsAll] = useState(false);
   const [filterItems, setFItems] = useState({
-    t0: { label: 'Без пересадок', checked: false },
-    t1: { label: '1 пересадка', checked: false },
-    t2: { label: '2 пересадки', checked: false },
-    t3: { label: '3 пересадки', checked: false },
+    '0_transfers': { label: 'Без пересадок', checked: false },
+    '1_transfer': { label: '1 пересадка', checked: false },
+    '2_transfers': { label: '2 пересадки', checked: false },
+    '3_transfers': { label: '3 пересадки', checked: false },
   });
 
   const toggleAllFilter = (isChecked) => {

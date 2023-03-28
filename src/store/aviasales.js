@@ -6,7 +6,7 @@ const initialState = {
   isLoading: true,
   errors: 0,
   sort: 'fast',
-  filter: ['t0', 't1', 't2', 't3'],
+  filter: ['0_transfers', '1_transfer', '2_transfers', '3_transfers'],
   tickets: [],
   toShow: 5,
 };
