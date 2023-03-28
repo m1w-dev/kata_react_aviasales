@@ -1,3 +1,5 @@
+const baseUrl = 'https://aviasales-test-api.kata.academy';
+
 const fetchTickets = (url) => {
   return fetch(url)
     .then((res) => res.json())
@@ -13,7 +15,7 @@ const setSearchId = () => {
   let sId = sessionStorage.getItem('searchId');
   if (sId) return sId;
 
-  return fetch('https://aviasales-test-api.kata.academy/search')
+  return fetch(`${baseUrl}/search`)
     .then((res) => res.json())
     .then(({ searchId }) => {
       sessionStorage.setItem('searchId', searchId);
@@ -24,7 +26,7 @@ const setSearchId = () => {
 const getTickets = async () => {
   const searchId = await setSearchId();
 
-  let url = `https://aviasales-test-api.kata.academy/tickets?searchId=${searchId}`;
+  let url = `${baseUrl}/tickets?searchId=${searchId}`;
 
   const res = await fetchTickets(url);
   if (res.stop) sessionStorage.removeItem('searchId');
